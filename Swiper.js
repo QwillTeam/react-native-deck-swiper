@@ -132,6 +132,13 @@ class Swiper extends Component {
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (event, gestureState) => false,
       onMoveShouldSetPanResponder: (event, gestureState) => {
+        // Force touch enabled devices will send events with dx & dy 0 as soon
+        // as the user touches the device, which will result in the pan responder
+        // immediately taking gesture events away from stuff like ScrollViews in child components
+        if (gestureState.dx === 0 && gestureState.dy === 0) {
+          return false
+        }
+
         const isVerticalSwipe = Math.abs(gestureState.dy) > Math.abs(gestureState.dx)
         if (!this.props.verticalSwipe && isVerticalSwipe) {
           return false
